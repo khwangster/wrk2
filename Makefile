@@ -1,4 +1,4 @@
-CFLAGS  := -std=c99 -Wall -O2 -D_REENTRANT -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
+CFLAGS  := -std=c99 -Wall -O2
 LIBS    := -lpthread -lm -lcrypto -lssl
 
 TARGET  := $(shell uname -s | tr '[A-Z]' '[a-z]' 2>/dev/null || echo unknown)
@@ -8,9 +8,11 @@ ifeq ($(TARGET), sunos)
 	LIBS   += -lsocket
 else ifeq ($(TARGET), darwin)
 	LDFLAGS += -pagezero_size 10000 -image_base 100000000
+	CFLAGS  += -I/usr/local/opt/openssl/include
 else ifeq ($(TARGET), linux)
 	LIBS    += -ldl
 	LDFLAGS += -Wl,-E
+	CFLAGS  += -D_REENTRANT -D_POSIX_C_SOURCE=200809L -D_GNU_SOURCE
 else ifeq ($(TARGET), freebsd)
 	CFLAGS  += -D_DECLARE_C99_LDBL_MATH
 	LDFLAGS += -Wl,-E
